@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VReon Virtual try on</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+            integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+          rel="stylesheet" />
+    <script src="camera_utils.js"
+            crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script defer
+            language="javascript"
+            type="text/javascript"
+            src="detection.js"></script>
+    <script defer
+            language="javascript"
+            type="text/javascript"
+            src="sketch.js"></script>
+
+    <script defer
+            language="javascript"
+            type="text/javascript"
+            src="three.js"></script>
+
+
+
+    <!--<script type="module" src="modelviewer.js"></script>-->
+    <!-- <model-viewer id="model" shadow-intensity="1" camera-controls touch-action="pan-y" generate-schema></model-viewer>
+     <model-viewer id="avatarmodel" shadow-intensity="1" camera-controls touch-action="pan-y" generate-schema></model-viewer> -->
+</head>
+    <body>
+
+        <div id="loading"></div>
+
+        <div class="container">
+            <div class="products">
+                <div class="product">
+                    <img id="products" src="assets/earring.png" style="width:250px; height:250px;" alt="">
+                    <div class="content">
+                        <h3 id="Itemname"><a href="https://www.amazon.in/Zaveri-Pearls-Jhumki-Earrings-ZPFK6632/dp/B077QX4DLX/ref=sr_1_14?crid=24OL55T8UB24D&keywords=earrings+for+women+gold&qid=1676960494&sprefix=earrings+for+women+gol%2Caps%2C818&sr=8-14">Gold Earring</a></h3>
+                        <span id="price"><a href="https://www.amazon.in/Zaveri-Pearls-Jhumki-Earrings-ZPFK6632/dp/B077QX4DLX/ref=sr_1_14?crid=24OL55T8UB24D&keywords=earrings+for+women+gold&qid=1676960494&sprefix=earrings+for+women+gol%2Caps%2C818&sr=8-14">Rs12000</a></span>
+                        <span id="Details">
+                            weight:20gms
+                            <br>22 carat Gold <br>916KDM <br />Hall mark
+                        </span>
+                    </div>
+                    <div class="link">
+                        <a href="https://www.amazon.in/Zaveri-Pearls-Jhumki-Earrings-ZPFK6632/dp/B077QX4DLX/ref=sr_1_14?crid=24OL55T8UB24D&keywords=earrings+for+women+gold&qid=1676960494&sprefix=earrings+for+women+gol%2Caps%2C818&sr=8-14">Buy Now</a>
+                        <a href="#">Add to      Cart</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="page">
+            <h1>VReon's Virtual jewellery TRY ON !!!</h1>
+
+            <canvas id="scenecanvas"></canvas>
+           
+
+            <!-- web cam output video  -->
+            <div>
+                <video id="video1">
+                </video>
+
+            </div>
+
+            <canvas style="z-index:5;" id="canvas1"></canvas>
+
+
+            <div id="btn" style="display:inline-block; z-index: 2; position: absolute; top: 43%; left: 50%; margin-right: -50%; transform: translate(-50%, -50%);">
+                <input type="file" accept="image/*, video/*" onchange="loadMedia(event)">
+                <img style=" height:680px; width:880px;" id="media-preview" src="#" alt="Media Preview">
+                <video id="video2">
+                </video>
+                <img id="outimage" src="#" />
+
+                uploaded video
+            </div>
+
+            <!-- buttons panel -->
+
+            <div class="scroll">
+                <div>
+                    <!-- compare button and user photo/video upload button-->
+                    <button id="compare"> <img style=" height:20px; width:20px;" src="assets/split.png" /></button> compare
+                    <button id="photo-btn"> <img style="display:inline-block; width: 20px; height: 20px;" src="assets/upload.png " /></button>click here to upload photo/video
+                    <button id="snapshot-button"><img style="display:inline-block; width: 20px; height: 20px;" src="assets/takephoto.png " /></button>Take Snapshot
+                </div>
+                <!--Ornaments table with category-->
+                <div class="table">
+                    <!--Earring table-->
+                    <div id="ears" class="filter">
+                        <center class="text">
+                            Earring
+                            <img class="avatar" src="assets/earring.png" />
+                        </center>
+                    </div>
+                    <div id="ear2" class="filter">
+                        <center class="text">
+                            Earring
+                            <img class="avatar" src=" assets/Earrings-1.png" />
+                        </center>
+                    </div>
+
+                    <div id="ear3" class="filter">
+                        <center class="text">
+                            Earring
+                            <img class="avatar" src=" assets/Earrings-2.png" />
+                        </center>
+                    </div>
+                    <div id="ear4" class="filter">
+                        <center class="text">
+                            Earring
+                            <img class="avatar" src=" assets/Earrings3.png" />
+                        </center>
+                    </div>
+                    <div id="ear5" class="filter">
+                        <center class="text">
+                            Earring
+                            <img class="avatar" src=" assets/Earrings4.png" />
+                        </center>
+
+                    </div>
+                    <div id="ear6" class="filter">
+                        <center class="text">
+                            Earring
+                            <img class="avatar" src=" assets/Earrings5.png" />
+                        </center>
+
+                    </div>
+
+                </div>
+                <div class="table">
+                    <!--Necklace table-->
+                    <div id="neck1" class="filter">
+                        <center class="text">
+                            chain
+                            <img class="avatar" src="assets/chain.png" />
+                        </center>
+                    </div>
+                    <div id="neck" class="filter">
+                        <center class="text">
+                            Necklace
+                            <img class="avatar" src="assets/necklace.png" />
+                        </center>
+                    </div>
+                    <div id="neck2" class="filter">
+                        <center class="text">
+                            Necklace
+                            <img class="avatar" src="assets/necklace1.png" />
+                        </center>
+                    </div>
+                    <div id="neck3" class="filter">
+                        <center class="text">
+                            Necklace
+                            <img class="avatar" src="assets/necklace2.png" />
+                        </center>
+                    </div><div id="neck4" class="filter">
+                        <center class="text">
+                            Necklace
+                            <img class="avatar" src="assets/necklace3.png" />
+                        </center>
+                    </div><div id="neck5" class="filter">
+                        <center class="text">
+                            Necklace
+                            <img class="avatar" src="assets/necklace4.png" />
+                        </center>
+                    </div>
+                </div>
+                <div class="table">
+                    <!--Nosepin table-->
+                    <div id="nosepin" class="filter">
+                        <!--Left Nose-->
+                        <center class="text">
+                            Nosepin
+                            <img class="avatar" src="assets/nosepin.png" />
+                        </center>
+                    </div><div id="nosepin1" class="filter">
+                        <!--Right Nose-->
+                        <center class="text">
+                            Nosepin
+                            <img class="avatar" src="assets/Nose_Piercing.png" />
+                        </center>
+                    </div>
+                </div>
+                <div class="table">
+                    <!--EyeWear Table-->
+                    <div id="coolers" class="filter">
+                        <center class="text">
+                            EyeWear
+                            <img class="avatar" src="assets/coolers.png" />
+                        </center>
+                    </div>
+                    <div id="specs" class="filter">
+                        <center class="text">
+                            EyeWear
+                            <img class="avatar" src="assets/Specs.png" />
+                        </center>
+                    </div>
+                    <div id="specs2" class="filter">
+                        <center class="text">
+                            EyeWear
+                            <img class="avatar" src="assets/Specs_2.png" />
+                        </center>
+                    </div>
+                    <div id="specs3" class="filter">
+                        <center class="text">
+                            EyeWear
+                            <img class="avatar" src="assets/Coolers_1.png" />
+                        </center>
+                    </div>
+                    <div id="specs4" class="filter">
+                        <center class="text">
+                            EyeWear
+                            <img class="avatar" src="assets/Specs_2.png" />
+                        </center>
+                    </div>
+                </div>
+
+                <div class="table">
+                    <!--ForeHead-->
+                    <div id="forehead" class="filter">
+                        <center class="text">
+                            Pendant
+                            <img class="avatar" src="assets/nethichutti.png" />
+                        </center>
+                    </div>
+                    <div id="forehead1" class="filter">
+                        <center class="text">
+                            Pendant
+                            <img class="avatar" src="assets/nethichutti2.png" />
+                        </center>
+                    </div>
+                </div>
+                <div class="table">
+                    <!--Hand-->
+                    <div id="ring" class="filter">
+                        <center class="text">
+                            Ring
+                            <img class="avatar" src="assets/nethichutti.png" />
+                        </center>
+                    </div>
+                    <div id="watch" class="filter">
+                        <center class="text">
+                            watch
+                            <img class="avatar" src="assets/necklace4.png" />
+                        </center>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+        </div>
+
+
+    </body>
+</html>
+

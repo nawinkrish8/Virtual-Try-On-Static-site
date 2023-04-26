@@ -1,0 +1,20 @@
+Facial Landmarks :
+https://facemeshmedium.netlify.app/labeleddots/ 
+
+            
+
+     function getEyeDistance(faceAnnotations) {
+        const leftEye = faceAnnotations.landmarks[2];
+        const rightEye = faceAnnotations.landmarks[5];
+
+        const xDiff = rightEye[0] - leftEye[0];
+        const yDiff = rightEye[1] - leftEye[1];
+        const eyeDistance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+
+        return eyeDistance;
+    }
+
+    // Example usage:
+    const faceAnnotations = ...; // get face annotations from FaceMesh
+    const eyeDistance = getEyeDistance(faceAnnotations);
+    console.log("Eye distance: ", eyeDistance);
